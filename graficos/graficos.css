@@ -1,0 +1,30 @@
+:root { --tinta: #1f2a37; --suave: #5b6470; --acento: #0098cd; --acento-osc: #0b6a8f; --rojo: #c2410c; --linea: #e5e7eb; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--tinta); background: #fff; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 16px; }
+h2 { font-size: 1.3rem; margin: 0 0 6px; }
+h3 { font-size: 1.05rem; margin: 18px 0 4px; }
+p { margin: 4px 0 12px; line-height: 1.5; }
+a { color: var(--acento-osc); }
+.grupo { margin-bottom: 8px; }
+.etiqueta { display: block; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--suave); margin-bottom: 4px; }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; }
+button { border: 1px solid var(--acento); background: #fff; color: var(--acento-osc); border-radius: 999px; padding: 6px 12px; font-size: .9rem; cursor: pointer; font-family: inherit; }
+button[aria-pressed="true"] { background: var(--acento); color: #fff; }
+.grid { display: grid; grid-template-columns: 1fr 240px; gap: 18px; align-items: start; margin-top: 10px; }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+svg { width: 100%; height: auto; display: block; }
+#barras, #linea { max-width: 620px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+td { padding: 7px 4px; border-bottom: 1px solid var(--linea); font-size: .95rem; }
+td:last-child { text-align: right; font-weight: 700; }
+.punto { fill: var(--acento); fill-opacity: .75; }
+.eje text { font-size: 12px; fill: var(--suave); }
+.eje path, .eje line { stroke: #9aa3ad; }
+.src { font-size: .8rem; color: var(--suave); }
+.control { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0; }
+.control label { font-size: .95rem; }
+input[type=range] { width: min(320px, 100%); accent-color: var(--acento); }
+.dato { font-variant-numeric: tabular-nums; font-weight: 700; }
+.aviso { background: #fff4ec; border-left: 4px solid var(--rojo); padding: 8px 12px; margin: 8px 0; }
+.ok { background: #ecf7fb; border-left: 4px solid var(--acento); padding: 8px 12px; margin: 8px 0; }

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mismas estadísticas, distintos gráficos</title>
+<link rel="stylesheet" href="graficos.css">
+</head>
+<body>
+<main class="wrap">
+<h2>Mismas estadísticas, distintos gráficos</h2>
+<p>Elige un conjunto de datos. Las cifras de la derecha apenas cambian; la forma de los puntos, en cambio, es completamente distinta. Por eso hay que <b>mirar los datos</b> y no solo resumirlos.</p>
+
+<div class="grupo"><span class="etiqueta">Cuarteto de Anscombe</span><div class="btns" id="b-anscombe"></div></div>
+<div class="grupo"><span class="etiqueta">Docena del Datasaurus</span><div class="btns" id="b-dozen"></div></div>
+
+<div class="grid">
+  <svg id="chart" role="img" aria-label="Diagrama de dispersión del conjunto de datos seleccionado"></svg>
+  <div>
+    <table aria-live="polite">
+      <tr><td>Media de x</td><td id="mx"></td></tr>
+      <tr><td>Media de y</td><td id="my"></td></tr>
+      <tr><td>Desviación típica de x</td><td id="sx"></td></tr>
+      <tr><td>Desviación típica de y</td><td id="sy"></td></tr>
+      <tr><td>Correlación</td><td id="r"></td></tr>
+      <tr><td>Número de puntos</td><td id="n"></td></tr>
+    </table>
+  </div>
+</div>
+
+<p class="src">Reproduce la figura 1 de Franconeri et al. (2021). Datos: cuarteto de Anscombe (1973) y Datasaurus Dozen de Matejka y Fitzmaurice (2017), a partir del dataset de Alberto Cairo. Descarga: <a href="../datos/anscombe.csv" target="_blank">anscombe.csv</a> · <a href="../datos/datasaurus_dozen.tsv" target="_blank">datasaurus_dozen.tsv</a>.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="altura.js"></script>
+<script>
+const NOMBRES = {I:'I', II:'II', III:'III', IV:'IV', dino:'Dinosaurio', away:'Disperso', h_lines:'Líneas horizontales', v_lines:'Líneas verticales', x_shape:'Forma de X', star:'Estrella', high_lines:'Líneas altas', dots:'Grupos', circle:'Círculo', bullseye:'Diana', slant_up:'Diagonal ascendente', slant_down:'Diagonal descendente', wide_lines:'Líneas anchas'};
+const fmt = v => v.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const W = 560, H = 440, m = {t: 12, r: 14, b: 36, l: 44};
+const svg = d3.select('#chart').attr('viewBox', `0 0 ${W} ${H}`);
+const x = d3.scaleLinear().range([m.l, W - m.r]);
+const y = d3.scaleLinear().range([H - m.b, m.t]);
+const gx = svg.append('g').attr('class', 'eje').attr('transform', `translate(0,${H - m.b})`);
+const gy = svg.append('g').attr('class', 'eje').attr('transform', `translate(${m.l},0)`);
+const gd = svg.append('g');
+let datos, famActual = null;
+
+function corr(a, b) {
+  const ma = d3.mean(a), mb = d3.mean(b); let s = 0, sa = 0, sb = 0;
+  for (let i = 0; i < a.length; i++) { const da = a[i] - ma, db = b[i] - mb; s += da * db; sa += da * da; sb += db * db; }
+  return s / Math.sqrt(sa * sb);
+}
+
+function mostrar(fam, clave) {
+  const pts = datos[fam][clave];
+  const mismaFam = fam === famActual;
+  if (fam === 'anscombe') { x.domain([2, 20]); y.domain([2, 14]); } else { x.domain([0, 105]); y.domain([-5, 105]); }
+  gx.transition().duration(mismaFam ? 0 : 300).call(d3.axisBottom(x).ticks(6));
+  gy.transition().duration(mismaFam ? 0 : 300).call(d3.axisLeft(y).ticks(6));
+  const r = fam === 'anscombe' ? 7 : 4.5;
+  if (!mismaFam) gd.selectAll('circle').remove();
+  gd.selectAll('circle').data(pts, (d, i) => i).join(
+    enter => enter.append('circle').attr('class', 'punto').attr('r', r).attr('cx', d => x(d[0])).attr('cy', d => y(d[1])),
+    update => update.transition().duration(1000).ease(d3.easeCubicInOut).attr('cx', d => x(d[0])).attr('cy', d => y(d[1]))
+  );
+  famActual = fam;
+  const xs = pts.map(d => d[0]), ys = pts.map(d => d[1]);
+  d3.select('#mx').text(fmt(d3.mean(xs)));
+  d3.select('#my').text(fmt(d3.mean(ys)));
+  d3.select('#sx').text(fmt(d3.deviation(xs)));
+  d3.select('#sy').text(fmt(d3.deviation(ys)));
+  d3.select('#r').text(fmt(corr(xs, ys)));
+  d3.select('#n').text(pts.length);
+  d3.selectAll('.btns button').attr('aria-pressed', function () { return this.dataset.k === fam + '|' + clave; });
+  svg.attr('aria-label', `Diagrama de dispersión: ${fam === 'anscombe' ? 'Anscombe ' : ''}${NOMBRES[clave]}`);
+}
+
+d3.json('../datos/scatter.json').then(d => {
+  datos = d;
+  for (const fam of ['anscombe', 'dozen']) {
+    const claves = fam === 'anscombe' ? ['I', 'II', 'III', 'IV'] : ['dino', 'star', 'circle', 'bullseye', 'x_shape', 'h_lines', 'v_lines', 'wide_lines', 'high_lines', 'slant_up', 'slant_down', 'dots', 'away'];
+    d3.select('#b-' + fam).selectAll('button').data(claves).join('button')
+      .attr('type', 'button').attr('data-k', k => fam + '|' + k).text(k => NOMBRES[k])
+      .on('click', (e, k) => mostrar(fam, k));
+  }
+  mostrar('dozen', 'dino');
+});
+</script>
+</body>
+</html>

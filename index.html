@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo engañan los gráficos sin mentir · Franconeri et al. (2021)</title>
+<meta name="description" content="Web divulgativa del artículo The Science of Visual Data Communication: What Works (Franconeri et al., 2021), con podcast, infografías y gráficos interactivos.">
+<style>
+:root { --tinta: #1f2a37; --suave: #5b6470; --acento: #0098cd; --acento-osc: #0b6a8f; --rojo: #c2410c; --fondo2: #f3f7fa; --linea: #e5e7eb; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--tinta); background: #fff; line-height: 1.6; font-size: 18px; }
+a { color: var(--acento-osc); }
+header.portada { background: linear-gradient(135deg, #0b6a8f, #0098cd); color: #fff; padding: 56px 20px 48px; }
+.ancho { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+header.portada .ancho { padding: 0; }
+.antetitulo { text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; font-weight: 700; opacity: .85; margin: 0 0 8px; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; margin: 0 0 12px; }
+.subtitulo { font-size: 1.15rem; margin: 0; max-width: 720px; opacity: .95; }
+nav.indice { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--linea); z-index: 5; }
+nav.indice ul { list-style: none; margin: 0 auto; padding: 10px 20px; display: flex; gap: 18px; overflow-x: auto; max-width: 960px; font-size: .9rem; white-space: nowrap; }
+nav.indice a { text-decoration: none; color: var(--suave); font-weight: 600; }
+section { padding: 48px 0; }
+section.alt { background: var(--fondo2); }
+h2 { font-size: 1.7rem; line-height: 1.2; margin: 0 0 12px; }
+.pitch { font-size: 1.3rem; line-height: 1.55; border-left: 6px solid var(--acento); padding: 4px 0 4px 20px; margin: 0; }
+.escalera { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 28px; }
+@media (max-width: 760px) { .escalera { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 460px) { .escalera { grid-template-columns: 1fr; } }
+.peldano { background: #fff; border: 1px solid var(--linea); border-top: 5px solid var(--acento); border-radius: 8px; padding: 14px; font-size: .95rem; }
+.peldano b { display: block; color: var(--acento-osc); margin-bottom: 4px; }
+audio { width: 100%; margin: 8px 0; }
+figure { margin: 20px 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--linea); border-radius: 6px; background: #fff; }
+figcaption { font-size: .85rem; color: var(--suave); margin-top: 6px; }
+.ideas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+@media (max-width: 640px) { .ideas { grid-template-columns: 1fr; } }
+.idea { background: #fff; border-left: 5px solid var(--acento); padding: 12px 16px; border-radius: 4px; }
+.idea h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.idea p { margin: 0; font-size: .95rem; }
+iframe.grafico { width: 100%; border: 1px solid var(--linea); border-radius: 8px; height: 720px; background: #fff; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 760px) { .dos { grid-template-columns: 1fr; } }
+ul.check { padding-left: 1.2em; }
+ul.check li { margin-bottom: 6px; }
+footer { background: #14213d; color: #dfe6ee; padding: 40px 0; font-size: .95rem; }
+footer h2 { color: #fff; font-size: 1.2rem; }
+footer a { color: #9bd7f0; }
+.ref { background: rgba(255,255,255,.06); padding: 14px 16px; border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<header class="portada">
+  <div class="ancho">
+    <p class="antetitulo">Divulgación de un artículo científico</p>
+    <h1>Cómo engañan los gráficos sin mentir</h1>
+    <p class="subtitulo">Lo que la psicología de la percepción sabe sobre comunicar con datos, a partir de <i>The Science of Visual Data Communication: What Works</i> (Franconeri, Padilla, Shah, Zacks y Hullman, 2021).</p>
+  </div>
+</header>
+
+<nav class="indice" aria-label="Secciones">
+  <ul>
+    <li><a href="#mensaje">El mensaje</a></li>
+    <li><a href="#escucha">Escucha</a></li>
+    <li><a href="#articulo">El artículo</a></li>
+    <li><a href="#estadisticas">Estadísticas</a></li>
+    <li><a href="#ejes">Ejes</a></li>
+    <li><a href="#color">Color</a></li>
+    <li><a href="#infografias">Infografías</a></li>
+    <li><a href="#ahora">¿Y ahora qué?</a></li>
+  </ul>
+</nav>
+
+<main>
+<section id="mensaje">
+  <div class="ancho">
+    <h2>El mensaje en 30 segundos</h2>
+    <p class="pitch">Cada día vemos gráficos en las noticias, en el trabajo y en la consulta médica, pero muchos se entienden mal. Una revisión de la investigación muestra que captamos de un vistazo la forma general de los datos, aunque comparar valores concretos nos cuesta mucho. Por eso el diseño decide qué entiende el público. Si guiamos la atención y respetamos las convenciones, los gráficos informan en lugar de confundir.</p>
+    <div class="escalera">
+      <div class="peldano"><b>Hallazgo</b>La vista capta de un golpe la tendencia de un gráfico; comparar valores es lento.</div>
+      <div class="peldano"><b>¿Y qué?</b>El diseño decide qué comparación ve el público.</div>
+      <div class="peldano"><b>¿Y por qué importa?</b>Un mal gráfico confunde o genera desconfianza.</div>
+      <div class="peldano"><b>¿Y ahora qué?</b>Guiar la atención y respetar las convenciones.</div>
+    </div>
+  </div>
+</section>
+
+<section id="escucha" class="alt">
+  <div class="ancho">
+    <h2>Escucha: «Cómo engañan los gráficos sin mentir»</h2>
+    <p>Una conversación de unos 22 minutos que recorre las ideas principales del artículo.</p>
+    <audio controls preload="metadata" src="audio/podcast.m4a">Tu navegador no puede reproducir el audio. <a href="audio/podcast.m4a">Descárgalo aquí</a>.</audio>
+    <p style="font-size:.85rem;color:var(--suave)">Podcast generado con NotebookLM a partir del artículo y revisado por el autor de esta web.</p>
+  </div>
+</section>
+
+<section id="articulo">
+  <div class="ancho">
+    <h2>Lo que dice el artículo</h2>
+    <p>La revisión reúne décadas de investigación sobre cómo leemos los gráficos. Su figura 2 lo resume en una sola tabla: qué canales visuales leemos con precisión, qué ilusiones los distorsionan, en qué es buena la vista y en qué es lenta.</p>
+    <figure>
+      <img src="img/figura2.png" alt="Figura 2 del artículo: ranking de precisión de los canales visuales (posición, longitud, área, ángulo e intensidad), ilusiones habituales de cada canal, estadísticas globales que la vista extrae rápido y técnicas para guiar las comparaciones." loading="lazy">
+      <figcaption>Figura 2 de Franconeri et al. (2021), «A summary of the power and limits of visual data processing». Reproducida con fines docentes.</figcaption>
+    </figure>
+    <div class="ideas">
+      <div class="idea"><h3>1. No todos los canales son iguales</h3><p>Leemos con más precisión la posición y la longitud que el área, el ángulo o la intensidad del color.</p></div>
+      <div class="idea"><h3>2. Cada canal tiene sus ilusiones</h3><p>Ejes que no empiezan en cero, áreas que engañan o colores que cambian según el fondo.</p></div>
+      <div class="idea"><h3>3. La vista es rápida para lo global</h3><p>Medias, máximos, tendencias y agrupaciones se perciben de un vistazo.</p></div>
+      <div class="idea"><h3>4. Y lenta para comparar</h3><p>Comparar valores concretos exige atención, así que hay que guiar al público hacia la comparación que importa.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="estadisticas" class="alt">
+  <div class="ancho">
+    <h2>Mismas estadísticas, distintos gráficos</h2>
+    <p>Antes de resumir los datos, hay que mirarlos. Prueba a cambiar de conjunto de datos: las medias, las desviaciones y la correlación son prácticamente las mismas.</p>
+    <iframe class="grafico" src="graficos/datasaurus.html" title="Gráfico interactivo: Datasaurus y cuarteto de Anscombe" loading="lazy"></iframe>
+  </div>
+</section>
+
+<section id="ejes">
+  <div class="ancho">
+    <h2>El eje cambia la historia</h2>
+    <p>Un eje recortado puede convertir una diferencia pequeña en un salto enorme. Pero empezar siempre en cero tampoco es la solución: depende de qué diferencia es relevante.</p>
+    <iframe class="grafico" src="graficos/ejes.html" title="Gráfico interactivo: efecto del inicio del eje en barras y líneas" loading="lazy" style="height:1180px"></iframe>
+  </div>
+</section>
+
+<section id="color" class="alt">
+  <div class="ancho">
+    <h2>El color también exagera</h2>
+    <p>Lo mismo ocurre con el color: la escala decide si un cambio de un grado parece una emergencia o pasa desapercibido.</p>
+    <iframe class="grafico" src="graficos/color.html" title="Gráfico interactivo: franjas de calentamiento con escala de color ajustable" loading="lazy" style="height:640px"></iframe>
+  </div>
+</section>
+
+<section id="infografias">
+  <div class="ancho">
+    <h2>Dos infografías para llevar</h2>
+    <div>
+      <figure>
+        <img src="img/infografia-guia.jpg" alt="Infografía: La ciencia de la comunicación visual de datos, guía práctica de diseño, con la jerarquía de precisión de los canales, ilusiones ópticas, accesibilidad y eficiencia en las comparaciones." loading="lazy">
+        <figcaption>Guía práctica de diseño. Generada con IA (Gemini Notebook) a partir del artículo.</figcaption>
+      </figure>
+      <figure style="max-width:560px;margin:28px auto 0">
+        <img src="img/infografia-enganos.jpg" alt="Infografía: ¿Cómo engañan los gráficos fieles? El problema (reencuadre, distorsión de ejes, error de codificación espacial) y la solución (contexto, anotaciones, codificación accesible)." loading="lazy">
+        <figcaption>¿Cómo engañan los gráficos fieles? Generada con IA (Gemini Notebook) a partir del artículo.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="ahora" class="alt">
+  <div class="ancho">
+    <h2>¿Y ahora qué? Cinco comprobaciones antes de publicar un gráfico</h2>
+    <ul class="check">
+      <li><b>Mira los datos</b> antes de resumirlos: un diagrama de dispersión revela lo que la media esconde.</li>
+      <li><b>Usa posición y longitud</b> para los valores que hay que comparar con precisión.</li>
+      <li><b>Decide dónde empieza el eje</b> pensando en qué diferencia importa, y dilo.</li>
+      <li><b>Guía la comparación:</b> resalta, anota y pon cerca lo que hay que comparar.</li>
+      <li><b>Piensa en todo el público:</b> paletas aptas para daltonismo y texto que acompañe al color.</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="ancho">
+    <h2>Referencia</h2>
+    <p class="ref">Franconeri, S. L., Padilla, L. M., Shah, P., Zacks, J. M. y Hullman, J. (2021). The Science of Visual Data Communication: What Works. <i>Psychological Science in the Public Interest, 22</i>(3), 110-161. <a href="https://doi.org/10.1177/15291006211051956">https://doi.org/10.1177/15291006211051956</a></p>
+    <h2>Datos</h2>
+    <p>Cuarteto de Anscombe (1973) · Datasaurus Dozen (Matejka y Fitzmaurice, 2017) · Temperatura global: NOAA, Climate at a Glance · Barras: valores del gráfico televisivo reproducido en la figura 3 del artículo. Todos los datos están en la carpeta <a href="https://github.com/javicanton/taller_UNIR/tree/main/datos">datos</a>.</p>
+    <h2>Declaración de uso de IA</h2>
+    <p>La estructura de la web, sus textos y el código de los gráficos interactivos se generaron con Claude (Anthropic) a partir del artículo, y los datos se comprobaron contra sus fuentes. El podcast se generó con NotebookLM y las infografías con Gemini Notebook. El mensaje central y la selección de contenidos son del autor, que ha revisado todos los materiales.</p>
+    <p>Web de demostración del curso <i>Del paper al producto: herramientas de IA para visibilizar tu investigación</i> (UNIR) · Preparada por <a href="https://javiercanton.com/cv/">Javier Cantón-Correa</a>.</p>
+  </div>
+</footer>
+
+<script>
+// Ajusta la altura de cada gráfico incrustado a su contenido.
+window.addEventListener('message', e => {
+  if (!e.data || !e.data.graficoAltura) return;
+  document.querySelectorAll('iframe.grafico').forEach(f => {
+    if (f.contentWindow === e.source) f.style.height = e.data.graficoAltura + 'px';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El eje cambia la historia</title>
+<link rel="stylesheet" href="graficos.css">
+</head>
+<body>
+<main class="wrap">
+<h2>El eje cambia la historia</h2>
+<p>Los datos no cambian; solo cambia dónde empieza el eje vertical. Mueve el control y observa cómo crece o se aplana la diferencia.</p>
+
+<h3>1. Barras: ¿cuánto creció?</h3>
+<div class="control">
+  <label for="r-barras">El eje empieza en <span class="dato" id="v-barras"></span></label>
+  <input type="range" id="r-barras" min="0" max="5900000" step="100000" value="0">
+  <button type="button" id="b-barras-0">Desde 0</button>
+  <button type="button" id="b-barras-c">Como en la televisión</button>
+</div>
+<svg id="barras" role="img" aria-label="Gráfico de barras con dos valores: 6 millones y 7,066 millones"></svg>
+<div id="m-barras" aria-live="polite"></div>
+
+<h3>2. Línea: ¿cuánto se ha calentado el planeta?</h3>
+<div class="control">
+  <label for="r-linea">El eje empieza en <span class="dato" id="v-linea"></span></label>
+  <input type="range" id="r-linea" min="0" max="13.2" step="0.2" value="0">
+  <button type="button" id="b-linea-0">Desde 0 °C</button>
+  <button type="button" id="b-linea-a">Ajustado a los datos</button>
+</div>
+<svg id="linea" role="img" aria-label="Temperatura media global anual de 1850 a 2025"></svg>
+<div id="m-linea" aria-live="polite"></div>
+
+<p class="src">Reproduce la figura 3 de Franconeri et al. (2021). Barras: inscripciones en el seguro médico de la reforma sanitaria de EE. UU. (6.000.000 a 27 de marzo y 7.066.000 a 31 de marzo de 2014), valores del gráfico televisivo que muestra el artículo. Línea: anomalía de la temperatura global anual de NOAA (Climate at a Glance), sumada a la media del siglo XX (13,9 °C), vía <a href="https://github.com/datasets/global-temp" target="_blank">datasets/global-temp</a>. Descarga: <a href="../datos/temperatura_global.csv" target="_blank">temperatura_global.csv</a>.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="altura.js"></script>
+<script>
+const num = (v, d = 0) => v.toLocaleString('es-ES', {minimumFractionDigits: d, maximumFractionDigits: d});
+const pct = v => (v * 100).toLocaleString('es-ES', {maximumFractionDigits: 0}) + ' %';
+
+// ---------- Barras ----------
+const B = [{e: '27 de marzo', v: 6000000}, {e: '31 de marzo', v: 7066000}];
+const WB = 560, HB = 340, mb = {t: 16, r: 16, b: 36, l: 92};
+const sb = d3.select('#barras').attr('viewBox', `0 0 ${WB} ${HB}`);
+const xb = d3.scaleBand().domain(B.map(d => d.e)).range([mb.l, WB - mb.r]).padding(.35);
+const yb = d3.scaleLinear().range([HB - mb.b, mb.t]);
+const gyb = sb.append('g').attr('class', 'eje').attr('transform', `translate(${mb.l},0)`);
+sb.append('g').attr('class', 'eje').attr('transform', `translate(0,${HB - mb.b})`).call(d3.axisBottom(xb).tickSize(0)).select('.domain').remove();
+const barras = sb.append('g').selectAll('rect').data(B).join('rect').attr('x', d => xb(d.e)).attr('width', xb.bandwidth()).attr('fill', (d, i) => i ? '#c2410c' : '#0098cd');
+const etq = sb.append('g').selectAll('text').data(B).join('text').attr('x', d => xb(d.e) + xb.bandwidth() / 2).attr('text-anchor', 'middle').attr('font-size', 14).attr('font-weight', 700).text(d => num(d.v));
+
+function dibujarBarras(min) {
+  yb.domain([min, 7500000]);
+  gyb.call(d3.axisLeft(yb).ticks(6).tickFormat(v => num(v)));
+  barras.attr('y', d => yb(d.v)).attr('height', d => yb(min) - yb(d.v));
+  etq.attr('y', d => yb(d.v) - 6);
+  d3.select('#v-barras').text(num(min));
+  const real = B[1].v / B[0].v - 1;
+  const visto = (B[1].v - min) / (B[0].v - min) - 1;
+  const caja = d3.select('#m-barras').attr('class', min > 0 ? 'aviso' : 'ok');
+  caja.html(`Diferencia real: <b>+${pct(real)}</b>. Diferencia que ve el ojo (altura de las barras): <b>+${pct(visto)}</b>.` + (min > 0 ? ' El eje recortado exagera el cambio.' : ''));
+}
+const rb = d3.select('#r-barras').on('input', e => dibujarBarras(+e.target.value));
+d3.select('#b-barras-0').on('click', () => { rb.property('value', 0); dibujarBarras(0); });
+d3.select('#b-barras-c').on('click', () => { rb.property('value', 5800000); dibujarBarras(5800000); });
+dibujarBarras(0);
+
+// ---------- Línea ----------
+const WL = 560, HL = 340, ml = {t: 16, r: 16, b: 36, l: 50};
+const sl = d3.select('#linea').attr('viewBox', `0 0 ${WL} ${HL}`);
+const xl = d3.scaleLinear().domain([1850, 2025]).range([ml.l, WL - ml.r]);
+const yl = d3.scaleLinear().range([HL - ml.b, ml.t]);
+sl.append('g').attr('class', 'eje').attr('transform', `translate(0,${HL - ml.b})`).call(d3.axisBottom(xl).tickFormat(d3.format('d')).ticks(7));
+const gyl = sl.append('g').attr('class', 'eje').attr('transform', `translate(${ml.l},0)`);
+const camino = sl.append('path').attr('fill', 'none').attr('stroke', '#c2410c').attr('stroke-width', 2.2);
+sl.append('text').attr('x', ml.l + 4).attr('y', ml.t + 4).attr('font-size', 12).attr('fill', '#5b6470').attr('dominant-baseline', 'hanging').text('°C');
+let T = [];
+
+function dibujarLinea(min) {
+  yl.domain([min, 15.2]);
+  gyl.call(d3.axisLeft(yl).ticks(6).tickFormat(v => num(v, min > 10 ? 1 : 0)));
+  camino.attr('d', d3.line().x(d => xl(d[0])).y(d => yl(d[1]))(T));
+  d3.select('#v-linea').text(num(min, 1) + ' °C');
+  const ini = d3.mean(T.slice(0, 30), d => d[1]), fin = d3.mean(T.slice(-10), d => d[1]);
+  const caja = d3.select('#m-linea').attr('class', min > 0 ? 'ok' : 'aviso');
+  caja.html(`Media 1850-1879: <b>${num(ini, 1)} °C</b> · media 2016-2025: <b>${num(fin, 1)} °C</b> (+${num(fin - ini, 1)} °C). ` +
+    (min > 0 ? 'Con el eje ajustado se ve el calentamiento.' : 'Desde 0 °C la subida parece insignificante, pero 0 °C no es un cero con sentido para el clima.'));
+}
+d3.json('../datos/temp.json').then(d => {
+  T = d.map(([a, an]) => [a, 13.9 + an]);
+  const rl = d3.select('#r-linea').on('input', e => dibujarLinea(+e.target.value));
+  d3.select('#b-linea-0').on('click', () => { rl.property('value', 0); dibujarLinea(0); });
+  d3.select('#b-linea-a').on('click', () => { rl.property('value', 13.2); dibujarLinea(13.2); });
+  dibujarLinea(0);
+});
+</script>
+</body>
+</html>
